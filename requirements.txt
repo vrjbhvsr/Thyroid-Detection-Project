@@ -1,0 +1,7 @@
+pandas
+datetime
+matplotlib
+numpy
+seaborn
+imbalanced-learn
+-e .

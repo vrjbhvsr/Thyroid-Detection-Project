@@ -1,0 +1,3 @@
+2024-02-29/195433		Column name extraction from schema has started!
+2024-02-29/195433		Column name extraction from schema has completed! Now, Creating a final dataset with column names.
+2024-02-29/195433		Final dataset has prepared and moved to the Data directory for further processing.

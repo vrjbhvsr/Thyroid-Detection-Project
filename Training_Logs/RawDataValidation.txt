@@ -1,0 +1,7 @@
+2024-02-29/195634		Total number of columns are 30
+2024-02-29/195634		Validation of number of columns started!
+2024-02-29/195634		GoodRawData directory created
+2024-02-29/195634		BadRawData directory created
+2024-02-29/195634		Column numbers are Validated and file copied to the GoodRawData directory!
+2024-02-29/195634		Validation of missing values in columns started!
+2024-02-29/195655		GoodRawData directory deleted!

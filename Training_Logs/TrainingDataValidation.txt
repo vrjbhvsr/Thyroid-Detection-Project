@@ -1,0 +1,9 @@
+2024-02-29/195634		Validation of Raw Training data started!
+2024-02-29/195634		Validation of Raw Training data Completed!
+2024-02-29/195634		Data Transformation started!
+2024-02-29/195634		Data Transformation completed!
+2024-02-29/195634		Database operation started!
+2024-02-29/195634		Database and table created!
+2024-02-29/195655		Data insertion to the table completed!
+2024-02-29/195655		Data validation completed!
+2024-02-29/195655		Extracting data into csv!

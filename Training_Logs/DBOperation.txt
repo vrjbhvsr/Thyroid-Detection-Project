@@ -1,0 +1,9 @@
+2024-02-29/195634		Connection with TrainingData database established!
+2024-02-29/195634		Table created succesfully!
+2024-02-29/195634		Data insertion from GoodRawData file to table started!
+2024-02-29/195634		Connection with TrainingData database established!
+2024-02-29/195655		Data Succesfully inserted into Table!
+2024-02-29/195655		selection of data from table to csv started!
+2024-02-29/195655		Connection with TrainingData database established!
+2024-02-29/195655		Training_file_from_DB/ directory created!
+2024-02-29/195655		Rows and columns are written from table to Input.csv!
