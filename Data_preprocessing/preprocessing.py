@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
-from sklearn.impute import KNNImputer
+from sklearn.impute import KNNImputer,SimpleImputer
 from imblearn.over_sampling import RandomOverSampler
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
@@ -59,15 +59,22 @@ class preprocessing:
         except Exception as e:
             self.logger.log(self.logfile,"Error {e} occured")
             raise e
-    
+        
+    def ImputeMissingValues(self,data):
 
-    def SeparateFeaturesAndLabel(self,data,Label_column):
         try:
-            self.logger.log(self.logfile,"Separartion of attributes and output started!")
-            self.X = data.drop(Label_column,axis=1)
-            self.Y = data[Label_column]
-            self.logger.log(self.logfile,"Separartion of attributes and output completed!")
-            return self.X,self.Y
+            self.logger.log(self.logfile,"Imputing missing values with KNN Imputer>")
+            KnnIm=KNNImputer(n_neighbors=3, weights='uniform',missing_values=np.nan)
+            columns_ = ['TSH','T3', 'TT4','T4U','FTI']
+
+            for i in columns_:
+                data[i]=KnnIm.fit_transform(data[[i]])
+                self.logger.log(self.logfile,"Missing values replaced!")
+
+            imputer = SimpleImputer(missing_values=np.nan,strategy='most_frequent')
+            imputer.fit(data[['sex']])
+            data['sex']= imputer.transform(data[['sex']])
+            return data
         except Exception as e:
             self.logger.log(self.logfile,"Error {e} occured")
             raise e
@@ -97,13 +104,11 @@ class preprocessing:
         try:
             self.logger.log(self.logfile,"Encoding categorical data satrted")       
             # Firstly, we encode the sex attribute as it has only two categories.
-            data['sex'] = data['sex'].map({'M' : 0,'F': 1})
-
-            categorical_data = data.drop(['age','T3','TT4','T4U','FTI','sex'],axis=1)
+            data['sex'] = data['sex'].map({'F' : 1,'M': 2})
 
             # Secondly, Variables with bool value also be encoded
-            for var in categorical_data.columns:
-                if len(data[var].unique()) == 2:
+            for var in data.columns:
+                if var !='sex' and len(data[var].unique()) == 2:
                     data[var] = data[var].map({'f': 0, 't': 1})
 
             # We can get dummies for refferal_sources as it has more than two categories and that also are not in order.
@@ -122,61 +127,45 @@ class preprocessing:
             raise e
         
 
-    def ImputeMissingValues(self,data):
-
-        try:
-            self.logger.log(self.logfile,"Imputing missing values with KNN Imputer>")
-            KnnIm=KNNImputer(n_neighbors=3, weights='uniform',missing_values=np.nan)
-            Imp=KnnIm.fit_transform(data)
-            data=pd.DataFrame(data=Imp, columns=data.columns)
-            self.logger.log(self.logfile,"Missing values replaced!")
-            return data
-        except Exception as e:
-            self.logger.log(self.logfile,"Error {e} occured")
-            raise e
-
-
-    def ApplyOverSampling(self,X,Y):
-
-        try:
-            self.logger.log(self.logfile,"Applying Oversampling to the data")
-            rsmaple = RandomOverSampler()
-            x_sample, y_sample = rsmaple.fit_resample(X,Y)
-
-            return x_sample, y_sample
-        except Exception as e:
-            self.logger.log(self.logfile,"Error {e} occured")
-            raise e
+    def SeparateFeaturesAndLabel(self,data,Label_column):
+            try:
+                self.logger.log(self.logfile,"Separartion of attributes and output started!")
+                self.X = data.drop(Label_column,axis=1)
+                self.Y = data[Label_column]
+                self.logger.log(self.logfile,"Separartion of attributes and output completed!")
+                return self.X,self.Y
+            except Exception as e:
+                self.logger.log(self.logfile,"Error {e} occured")
+                raise e
+        
 
 
-    def scaling(self,x_sample,y_sample):
+    #def ApplyOverSampling(self,X,Y):
+
+       # try:
+            #self.logger.log(self.logfile,"Applying Oversampling to the data")
+            #rsmaple = RandomOverSampler()
+            #x_sample, y_sample = rsmaple.fit_resample(X,Y)
+
+            #return x_sample, y_sample
+        #except Exception as e:
+           # self.logger.log(self.logfile,"Error {e} occured")
+            #raise e
+
+
+    def scaling(self,X):
         try:
             self.logger.log(self.logfile, "Standard scaling on sampled data has started!")
             self.scaler = StandardScaler()
-            self.scaler.fit(x_sample)
-            self.scaled_data = self.scaler.transform(x_sample)
+            self.scaler.fit(X)
+            self.scaled_data = self.scaler.transform(X)
+            self.new_X = pd.DataFrame(self.scaled_data, columns= X.columns)
             self.logger.log(self.logfile,"Standard scaling has completed!")
 
-            return self.scaled_data
+            return self.new_X
 
         except Exception as e:
             self.logger.log(self.logfile,f"Exception {e} ocuured while standardizing the data")
-            raise e
-        
-
-    def ExtractingFeatureWithPCA(self,x_sample,scaled_data):
-        try:
-            self.logger.log(self.logfile,"Feature Extraction using pca started!")
-            pca = PCA(n_components=12)
-            self.x_pca = pca.fit_transform(scaled_data)
-            self.X_pca = pd.DataFrame(data = self.x_pca,columns=['component_1','component_2','component_3','component_4','component_5','component_6','component_7','component_8','component_9','component_10','component_11','component_12'])
-            self.logger.log(self.logfile,"Feature has Extracted using PCA")
-            self.X_pca.to_csv('preprocessed_data/data_pca.csv')
-
-            return self.X_pca
-        
-        except Exception as e:
-            self.logger.log(self.logfile,"Feature extraction completed.")
             raise e
 
 
